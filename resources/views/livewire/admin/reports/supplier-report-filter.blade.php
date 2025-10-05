@@ -72,7 +72,23 @@
                             <td>{{ $item->cities->governorate->name ?? $item->product->cities->governorate->name }}
                             </td>
                             <td>{{ $item->cities->name ?? $item->product->cities->name }}</td>
-                            <td>{{ number_format($item->product_price ?? $item->product->product_price, 2) }}</td>
+                        {{-- <h1>{{ $item->product}}</h1> --}}
+                            <!-- عمود سعر الشحنة -->
+                            <td class="notes-cell">
+                                @livewire(
+                                    'admin.reports.update-product-price',
+                                    [
+                                        'productId'     => $item->product->id ?? null,
+                                        'orderDetailId' => $item->id,
+                                        'currentStatus' => $item->product_status ?? 1,
+                                        'product_price' => $item->product->product_price ?? $item->product_price,
+                                    ],
+                                    key('price-'.$item->id)
+                                )
+                            </td>
+
+
+
                             <td>{{ number_format($item->shipping_price, 2) }}</td>
                             <td>{{ number_format($item->total_price, 2) }}</td>
                             <!-- عمود الملاحظات -->
@@ -99,17 +115,19 @@
                             @endif
 
                             {{-- عمود الحالات  --}}
-                            <td class="statusA{{ $item->id }}">{{ $item->status->name }}</td>
                             @if (!empty($item->product->status) && $item->product_status != 6)
-                            <td>
-                                @livewire('admin.status-selector',
-                                [
-                                    'productId'     => $item->product->id ?? null,
-                                    'orderDetailId' => $item->id,
-                                    'currentStatus' => $item->product_status,
-                                    'lastUpdate'    => $item->updated_at->format('d/m/Y')
-                                ], key($item->id))
-                            </td>
+                                <td>
+                                    @livewire(
+                                        'admin.status-selector',
+                                        [
+                                            'productId' => $item->product->id ?? null,
+                                            'orderDetailId' => $item->id,
+                                            'currentStatus' => $item->product_status,
+                                            'lastUpdate' => $item->updated_at->format('d/m/Y'),
+                                        ],
+                                        key($item->id)
+                                    )
+                                </td>
                             @endif
 
                             {{-- <td class="noPrint">{{ $item->status->name ?? $item->product->status->name }}</td> --}}

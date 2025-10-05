@@ -22,23 +22,27 @@ class SupplierReportFilter extends Component
     public $filters = [];
     protected $paginationTheme = 'bootstrap';
 
-    protected $listeners = ['filterSubmitted' => 'loadReports'];
+    protected $listeners =
+    [
+        'filterSubmitted'           => 'loadReports',
+        'OrderDeailesStatusUpdated' => 'handleOrderDeailesStatusUpdated',
+    ];
 
     public function loadReports($validated)
     {
         $this->filters  = $validated;
         $this->date1    = $validated['date1'];
         $this->date2    = $validated['date2'];
-        if (Cache::has('statuses'))
-        {
-            $this->allStatus = Cache::get('statuses');
-        } else
-        {
-            $this->allStatus = Cache::rememberForever('statuses', function ()
-            {
-                return Status::select('id', 'name')->where('id', '!=', 1)->get();
-            });
-        }
+        // if (Cache::has('statuses'))
+        // {
+        //     $this->allStatus = Cache::get('statuses');
+        // } else
+        // {
+        //     $this->allStatus = Cache::rememberForever('statuses', function ()
+        //     {
+        //         return Status::select('id', 'name')->where('id', '!=', 1)->get();
+        //     });
+        // }
 
         $this->resetPage();
     }
@@ -56,6 +60,33 @@ class SupplierReportFilter extends Component
     }
 
 
+    public function handleOrderDeailesStatusUpdated($data)
+    {
+        $orderDetailId = $data['orderDetailId'];
+        $productPrice    = $data['productPrice'];
+        // خصم من الاجمالي
+        $this->total -= ($productPrice);
+
+        // إزالة الشحنة من الـ reports
+        if (!empty($this->filters))
+        {
+            $reportService  = app(ReportsInterface::class);
+            $result         = $reportService->getSupplierReports($this->filters);
+
+            // فلترة الشحنات التي لا تحتوي على هذا الـ orderDetailId
+            $filteredReports = $result['reports']->filter(function($report) use ($orderDetailId) {
+            return $report->id != $orderDetailId;
+            });
+
+            $this->total = $filteredReports->sum(function($item) {
+                return $item->total_price;
+            });
+
+            $result['reports'] = $filteredReports;
+        }
+    }
+
+
 
     public function render()
     {
@@ -68,8 +99,8 @@ class SupplierReportFilter extends Component
             $result         = $reportService->getSupplierReports($this->filters);
 
 
-            $reports = $result['reports']; // ← هنا Paginator جاهز
-            $this->total   = $result['total'];
+            $reports        = $result['reports']; // ← هنا Paginator جاهز
+            $this->total    = $result['total'];
 
             // dd($this->total);
         }
