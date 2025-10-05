@@ -1,259 +1,378 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>On Fast</title>
+    <title>Go Express</title>
+    <link rel="icon" type="image/png" href="{{ asset('assets/admin/images/logo.jpg') }}">
+
     <style>
+        :root {
+            --primary-color: #4EA685;
+            --secondary-color: #57B894;
+            --black: #000000;
+            --white: #ffffff;
+            --gray: #efefef;
+            --gray-2: #757575;
 
-        @import url('https://fonts.googleapis.com/css2?family=Cairo&display=swap');
+            --facebook-color: #4267B2;
+            --google-color: #DB4437;
+            --twitter-color: #1DA1F2;
+            --insta-color: #E1306C;
+        }
 
-        body{
-            font-family: 'Cairo', sans-serif;
-            height: 100%;
-             direction: rtl;
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600&display=swap');
+
+        * {
+            font-family: 'Poppins', sans-serif;
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            position: relative;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            height: 100vh;
+        }
+
+        .col {
+            width: 50%;
+        }
+
+        .align-items-center {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .form-wrapper {
+            width: 100%;
+            max-width: 28rem;
+        }
+
+        .form {
+            padding: 1rem;
+            background-color: var(--white);
+            border-radius: 1.5rem;
+            width: 100%;
+            box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+            transform: scale(0);
+            transition: .5s ease-in-out;
+            transition-delay: 1s;
+        }
+
+        .input-group {
+            position: relative;
+            width: 100%;
+            margin: 1rem 0;
+        }
+
+        .input-group i {
+            position: absolute;
+            top: 50%;
+            left: 1rem;
+            transform: translateY(-50%);
+            font-size: 1.4rem;
+            color: var(--gray-2);
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 1rem 3rem;
+            font-size: 1rem;
+            background-color: var(--gray);
+            border-radius: .5rem;
+            border: 0.125rem solid var(--white);
+            outline: none;
+        }
+
+        .input-group input:focus {
+            border: 0.125rem solid var(--primary-color);
+        }
+
+        .form .button {
+            cursor: pointer;
+            width: 100%;
+            padding: .6rem 0;
+            border-radius: .5rem;
+            border: none;
+            background-color: var(--primary-color);
+            color: var(--white);
+            font-size: 1.2rem;
+            outline: none;
+        }
+
+        .form p {
+            margin: 1rem 0;
+            font-size: .7rem;
+        }
+
+        .flex-col {
+            flex-direction: column;
+        }
+
+        .social-list {
+            margin: 2rem 0;
+            padding: 1rem;
+            border-radius: 1.5rem;
+            width: 100%;
+            box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+            transform: scale(0);
+            transition: .5s ease-in-out;
+            transition-delay: 1.2s;
+        }
+
+        .social-list>div {
+            color: var(--white);
+            margin: 0 .5rem;
+            padding: .7rem;
+            cursor: pointer;
+            border-radius: .5rem;
+            cursor: pointer;
+            transform: scale(0);
+            transition: .5s ease-in-out;
+        }
+
+        .social-list>div:nth-child(1) {
+            transition-delay: 1.4s;
+        }
+
+        .social-list>div:nth-child(2) {
+            transition-delay: 1.6s;
+        }
+
+        .social-list>div:nth-child(3) {
+            transition-delay: 1.8s;
+        }
+
+        .social-list>div:nth-child(4) {
+            transition-delay: 2s;
+        }
+
+        .social-list>div>i {
+            font-size: 1.5rem;
+            transition: .4s ease-in-out;
+        }
+
+        .social-list>div:hover i {
+            transform: scale(1.5);
+        }
+
+        .facebook-bg {
+            background-color: var(--facebook-color);
+        }
+
+        .google-bg {
+            background-color: var(--google-color);
+        }
+
+        .twitter-bg {
+            background-color: var(--twitter-color);
+        }
+
+        .insta-bg {
+            background-color: var(--insta-color);
+        }
+
+        .pointer {
+            cursor: pointer;
+        }
+
+        .container.sign-in .form.sign-in,
+        .container.sign-in .social-list.sign-in,
+        .container.sign-in .social-list.sign-in>div,
+        .container.sign-up .form.sign-up,
+        .container.sign-up .social-list.sign-up,
+        .container.sign-up .social-list.sign-up>div {
+            transform: scale(1);
+        }
+
+        .content-row {
+            position: absolute;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 6;
+            width: 100%;
+        }
+
+        .text {
+            margin: 4rem;
+            color: var(--white);
+        }
+
+        .text h2 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin: 2rem 0;
+            transition: 1s ease-in-out;
+        }
+
+        .text p {
+            font-weight: 600;
+            transition: 1s ease-in-out;
+            transition-delay: .2s;
+        }
+
+        .img img {
+            width: 30vw;
+            transition: 1s ease-in-out;
+            transition-delay: .4s;
+        }
+
+        .text.sign-in h2,
+        .text.sign-in p,
+        .img.sign-in img {
+            transform: translateX(-250%);
+        }
+
+        .text.sign-up h2,
+        .text.sign-up p,
+        .img.sign-up img {
+            transform: translateX(250%);
+        }
+
+        .container.sign-in .text.sign-in h2,
+        .container.sign-in .text.sign-in p,
+        .container.sign-in .img.sign-in img,
+        .container.sign-up .text.sign-up h2,
+        .container.sign-up .text.sign-up p,
+        .container.sign-up .img.sign-up img {
+            transform: translateX(0);
+        }
+
+        /* BACKGROUND */
+
+        .container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: 0;
+            height: 100vh;
+            width: 300vw;
+            transform: translate(35%, 0);
+            background-image: linear-gradient(-45deg, var(--primary-color) 0%, var(--secondary-color) 100%);
             background-image: url('../assets/admin/images/ca297136-78d1-422c-8274-0afa15d1b748.jpg');
-            background-size: cover;
-            background-position-x: center;
-            background-position-y: center;
-            background-color:rgba(0,0,0,.19);
-}
+            background-size: contain;   /* يخلي اللوجو يبان كامل */
+            transition: 1s ease-in-out;
+            z-index: 6;
+            box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+            border-bottom-right-radius: max(50vw, 50vh);
+            border-top-left-radius: max(50vw, 50vh);
+        }
 
+        .container.sign-in::before {
+            transform: translate(0, 0);
+            right: 50%;
+        }
 
-*,:after,:before{box-sizing:border-box}
-.clearfix:after,.clearfix:before{content:'';display:table}
-.clearfix:after{clear:both;display:block}
-a{color:inherit;text-decoration:none}
+        .container.sign-up::before {
+            transform: translate(100%, 0);
+            right: 50%;
+        }
 
-.login-wrap {
-    width: 100%;
-    margin: auto;
-    max-width: 567px;
-    min-height: 752px;
-    position: relative;
-    box-shadow: 0 12px 15px 0 rgb(0 0 0 / 24%), 0 17px 50px 0 rgb(0 0 0 / 24%);
-}
+        /* RESPONSIVE */
 
+        @media only screen and (max-width: 425px) {
 
+            .container::before,
+            .container.sign-in::before,
+            .container.sign-up::before {
+                height: 100vh;
+                border-bottom-right-radius: 0;
+                border-top-left-radius: 0;
+                z-index: 0;
+                transform: none;
+                right: 0;
+            }
 
+            /* .container.sign-in .col.sign-up {
+        transform: translateY(100%);
+    } */
 
-.login-html{
-	width:100%;
-	height:100%;
-	position:absolute;
-	padding: 20px;
-	background-color : transparent;
-    margin-top: 5px;
-}
-.login-html .sign-in-htm,
-.login-html .sign-up-htm{
-	top:0;
-	left:0;
-	right:0;
-	bottom:0;
-	position:absolute;
-	transform:rotateY(180deg);
-	backface-visibility:hidden;
-	transition:all .4s linear;
-}
-.login-html .sign-in,
-.login-html .sign-up,
-.login-form .group .check{
-	display:none;
-}
-.login-html .tab,
-.login-form .group .label,
-.login-form .group .button{
-	text-transform:uppercase;
-}
-.login-html .tab{
-	font-size:22px;
-	margin-right:15px;
-	padding-bottom:5px;
-	margin:0 15px 10px 0;
-	display:inline-block;
-	border-bottom:2px solid transparent;
-	font-weight: bolder;
+            .container.sign-in .col.sign-in,
+            .container.sign-up .col.sign-up {
+                transform: translateY(0);
+            }
 
-}
-.login-html .sign-in:checked + .tab,
-.login-html .sign-up:checked + .tab{
-	color:#fff;
-	border-color:#111111;
-}
-.login-form{
-	min-height:345px;
-	position:relative;
-	perspective:1000px;
-	transform-style:preserve-3d;
-}
-.login-form .group{
-	margin-bottom:15px;
-    color: #000
-}
-.login-form .group .label,
-.login-form .group .input,
-.login-form .group .button{
-	width:100%;
-	color:#fff;
-	display:block;
-}
-.login-form .group .input,
-.login-form .group .button{
-  border: none;
-    padding: 15px 20px;
-    border-radius: 7px;
-    background: rgba(0, 0, 0, 0.5);
+            .content-row {
+                align-items: flex-start !important;
+            }
 
-}
-.login-form .group input[data-type="password"]{
-	text-security:circle;
-	-webkit-text-security:circle;
-}
-.login-form .group .label{
-color: #fff;
-    font-size: 17px;
-    margin-bottom: 10px;
-    font-weight: bolder;
+            .content-row .col {
+                transform: translateY(0);
+                background-color: unset;
+            }
 
-}
-.login-form .group .button{
-	background:#d8990a;
-	   font-size: 28px;
-    font-weight: 700;
+            .col {
+                width: 100%;
+                position: absolute;
+                padding: 2rem;
+                background-color: var(--white);
+                border-top-left-radius: 2rem;
+                border-top-right-radius: 2rem;
+                transform: translateY(100%);
+                transition: 1s ease-in-out;
+            }
 
-}
+            .row {
+                align-items: flex-end;
+                justify-content: flex-end;
+            }
 
-.login-form .group .button:hover
-{
-    background:#000;
-     cursor: pointer;
-}
-.login-form .group label .icon{
-	width:15px;
-	height:15px;.login-html .tab
+            .form,
+            .social-list {
+                box-shadow: none;
+                margin: 0;
+                padding: 0;
+            }
 
-	border-radius:2px;
-	position:relative;
-	display:inline-block;
-	background:rgba(56, 54, 54, 0.1);
-}
-.login-form .group label .icon:before,
-.login-form .group label .icon:after{
-	content:'';
-	width:10px;
-	height:2px;
-	background:#fff;
-	position:absolute;
-	transition:all .2s ease-in-out 0s;
-}
-.login-form .group label .icon:before{
-	left:3px;
-	width:5px;
-	bottom:6px;
-	transform:scale(0) rotate(0);
-}
-.login-form .group label .icon:after{
-	top:6px;
-	right:0;
-	transform:scale(0) rotate(0);
-}
-.login-form .group .check:checked + label{
-	color:#fff;
-}
-.login-form .group .check:checked + label .icon{
-	background:#d8c30a;
-}
-.login-form .group .check:checked + label .icon:before{
-	transform:scale(1) rotate(45deg);
-}
-.login-form .group .check:checked + label .icon:after{
-	transform:scale(1) rotate(-45deg);
-}
-.login-html .sign-in:checked + .tab + .sign-up + .tab + .login-form .sign-in-htm{
-	transform:rotate(0);
-}
-.login-html .sign-up:checked + .tab + .login-form .sign-up-htm{
-	transform:rotate(0);
-}
+            .text {
+                margin: 0;
+            }
 
-.hr{
-	height:2px;
-	background:rgba(255,255,255,.2);
-}
-.foot-lnk{
-	text-align:center;
-	font-size: 22px;
-    color: #000000;
-    font-weight: bold;
-    text-decoration: underline;
-    -webkit-transition: color 2s;    transition: color 2s;
-}
+            .text p {
+                display: none;
+            }
 
-.foot-lnk:hover
-{
-     text-decoration: none;
-     color:#b76909;
-}
-
-@media (max-width: 575.98px) {
-    .login-html {font-size: 14px;}
-}
+            .text h2 {
+                margin: .5rem;
+                font-size: 2rem;
+            }
+        }
     </style>
 </head>
+
 <body>
-
-        <div class="login-wrap" style="margin-top: 80px">
-         <div class"overlay"> </div>
-        <div class="login-html">
-            <input id="tab-1" type="radio" name="tab" class="sign-in" checked><label for="tab-1" class="tab">تسجيل الدخول</label>
-            <input id="tab-2" type="radio" name="tab" class="sign-up"><label for="tab-2" class="tab">حساب جديد</label>
-            <div class="login-form">
-
-               <form action="{{ route('login') }}" method="post" style="margin-top: 30px">
-                @csrf
-                    <div class="sign-in-htm">
-                        <div class="group">
-                            <label for="user" class="label">ايميل المستخدم</label>
-                            <input id="user" type="text" class="input" name="email" required placeholder="ايميل المستخدم">
-                            @error('email')
-                                <span class="invalid-feedback" role="alert" style="background-color:#a7a7a7">
-                                    <strong style="color: #f00">{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
-                        <div class="group">
-                            <label for="pass" class="label">كلمة المرور</label>
-                            <input id="pass" type="password" class="input" data-type="password" name="password" placeholder="كلمة المرور" required>
-                            @error('password')
-                                <span class="invalid-feedback" role="alert" style="background-color:#a7a7a7">
-                                    <strong style="color: #f00">{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
-                        {{-- <div class="group">
-                            <input id="check" type="checkbox" class="check" checked>
-                            <label for="check"><span class="icon"></span> Keep me Signed in</label>
-                        </div> --}}
-                        <div class="group">
-                            <input type="submit" class="button" value="دخول">
-                        </div>
-                        <div class="hr"></div>
-                        <div class="foot-lnk">
-                            <a href="{{ route('forgetPassword.User') }}">   نسيت كلمة المرور ؟</a>
-                        </div>
-                    </div>
-               </form>
-
-               <form action="{{ route('register') }}" method="post">
-                @csrf
-                    <div class="sign-up-htm">
-                        <div class="group">
-                            <label for="user" class="label">اسم المستخدم</label>
-                            <input  type="text" class="input" placeholder="ادخل اسم المستخدم " name="name" required>
+    <div id="container" class="container">
+        <!-- FORM SECTION -->
+        <div class="row">
+            <!-- SIGN UP -->
+            <div class="col align-items-center flex-col sign-up">
+                <div class="form-wrapper align-items-center">
+                    <div class="form sign-up">
+                        <h2 style="color: #e08300">سجل حساب معنا</h2>
+                        <form method="POST" action="{{ route('register') }}">
+                            @csrf
+                        <div class="input-group">
+                            <i class='bx bxs-user'></i>
+                            <input type="text" placeholder="اسم المستخدم" name="name" required>
                             @error('name')
                                 <span class="invalid-feedback" role="alert" style="background-color:#a7a7a7">
                                     <strong style="color: #f00">{{ $message }}</strong>
@@ -261,19 +380,19 @@ color: #fff;
                             @enderror
                         </div>
 
-                        <div class="group">
-                            <label for="pass" class="label">ايميل المستخدم</label>
-                            <input id="pass" type="email" class="input" placeholder="ادخل ايميل المستخدم" name="email" required>
+                        <div class="input-group">
+                            <i class='bx bx-mail-send'></i>
+                            <input type="email" placeholder="ايميل المستخدم" name="email" required>
                             @error('email')
-                                <span class="invalid-feedback" role="alert" style="background-color:#a7a7a7">
+                                <span class="invalid-feedback" role="alert" style="background-color:#a7 a7a7">
                                     <strong style="color: #f00">{{ $message }}</strong>
                                 </span>
                             @enderror
                         </div>
 
-                        <div class="group">
-                            <label for="pass" class="label"> ( يجب ان يكون رقم التليفون المسجل هو المسجل في الشركة)تليفون المستخدم</label>
-                            <input id="pass" type="text" class="input" placeholder="ادخل تليفون المستخدم" name="phone" required>
+                        <div class="input-group">
+                            <i class='bx bxs-phone'></i>
+                            <input type="text" placeholder="تليفون المستخدم ( يجب ان يكون رقم التليفون المسجل هو المسجل في الشركة)" name="phone" required>
                             @error('phone')
                                 <span class="invalid-feedback" role="alert" style="background-color:#a7a7a7">
                                     <strong style="color: #f00">{{ $message }}</strong>
@@ -281,9 +400,9 @@ color: #fff;
                             @enderror
                         </div>
 
-                        <div class="group">
-                            <label for="pass" class="label">كلمة المرور</label>
-                            <input id="pass" type="password" class="input" placeholder="كلمة المرور" name="password">
+                        <div class="input-group">
+                            <i class='bx bxs-lock-alt'></i>
+                            <input type="password" placeholder="كلمة المرور" name="password" required>
                             @error('password')
                                 <span class="invalid-feedback" role="alert" style="background-color:#a7a7a7">
                                     <strong style="color: #f00">{{ $message }}</strong>
@@ -291,21 +410,119 @@ color: #fff;
                             @enderror
                         </div>
 
-                        <div class="group">
-                            <label for="pass" class="label">تاكيد كلمة المرور</label>
-                            <input id="pass" type="password" class="input" data-type="password" name="password_confirmation" required placeholder="تاكيد كلمة المرور">
+                        <div class="input-group">
+                            <i class='bx bxs-lock-alt'></i>
+                            <input type="password" placeholder="تاكيد كلمة المرور" name="password_confirmation" required>
                         </div>
+                        <input type="submit" class="button" value="تسجيل">
 
-                        <div class="group">
-                            <input type="submit" class="button" value="تسجيل">
-                        </div>
-                        <div class="hr"></div>
-
+                        </form>
+                        <p>
+                            <span>
+                               هل لديك حساب؟
+                            </span>
+                            <b onclick="toggle()" class="pointer">
+                                تسجيل دخول
+                            </b>
+                        </p>
                     </div>
-               </form>
+                </div>
+
             </div>
+            <!-- END SIGN UP -->
+            <!-- SIGN IN -->
+            <div class="col align-items-center flex-col sign-in">
+
+                <div class="form-wrapper align-items-center">
+                    <div class="form sign-in">
+                        <h2 style="color: #e08300">اهلا بعودتك مرة اخري</h2>
+
+                        <form action="{{ route('login') }}" method="post">
+                            @csrf
+                            <div class="input-group">
+                                <i class='bx bxs-user'></i>
+                                <input type="text" placeholder="ايميل المستخدم" name="email" required>
+                            </div>
+                            <div class="input-group">
+                                <i class='bx bxs-lock-alt'></i>
+                                <input type="password" placeholder="كلمة المرور" name="password" required>
+                            </div>
+                            <input type="submit" class="button" value="دخول">
+                            {{-- <button>
+							Sign in
+						</button> --}}
+
+                        </form>
+                        <p>
+                            <b>
+                                <a href="{{ route('forgetPassword.User') }}">   نسيت كلمة المرور ؟</a>
+
+                            </b>
+                        </p>
+                        <p>
+                            <span>
+                                ليس لديك حساب ؟
+                            </span>
+                            <b onclick="toggle()" class="pointer">
+                                انشاء حساب
+                            </b>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="form-wrapper">
+
+                </div>
+            </div>
+            <!-- END SIGN IN -->
         </div>
+        <!-- END FORM SECTION -->
+        <!-- CONTENT SECTION -->
+        <div class="row content-row">
+            <!-- SIGN IN CONTENT -->
+            <div class="col align-items-center flex-col">
+                <div class="text sign-in">
+                    {{-- <h2>
+                        اهلا بعودتك معنا
+                    </h2> --}}
+
+                </div>
+                <div class="img sign-in">
+
+                </div>
+            </div>
+            <!-- END SIGN IN CONTENT -->
+            <!-- SIGN UP CONTENT -->
+            <div class="col align-items-center flex-col">
+                <div class="img sign-up">
+
+                </div>
+                <div class="text sign-up">
+                    {{-- <h2>
+                        Join with us
+                    </h2> --}}
+
+                </div>
+            </div>
+            <!-- END SIGN UP CONTENT -->
+        </div>
+        <!-- END CONTENT SECTION -->
     </div>
 
+
+    <script>
+        let container = document.getElementById('container')
+
+        toggle = () =>
+        {
+            container.classList.toggle('sign-in')
+            container.classList.toggle('sign-up')
+        }
+
+        setTimeout(() => {
+            container.classList.add('sign-in')
+        }, 200)
+    </script>
 </body>
+
 </html>
